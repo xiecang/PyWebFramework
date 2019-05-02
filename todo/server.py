@@ -33,6 +33,7 @@ class Request(object):
             'Cookie: height=180; user=fc'
         ]
         """
+        self.headers = {}
         lines = header
         for line in lines:
             k, v = line.split(': ', 1)

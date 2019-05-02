@@ -106,13 +106,14 @@ class Model(object):
                 return m
         return None
 
-    def find_all(self, **kwargs):
+    @classmethod
+    def find_all(cls, **kwargs):
         """
         用法如下，kwargs 是只有一个元素的 dict
         u = User.find_by(username='fc')
         返回查到的所有元素
         """
-        data = self.all()
+        data = cls.all()
         r = []
         k, v = '', ''
         for key, value in kwargs.items():

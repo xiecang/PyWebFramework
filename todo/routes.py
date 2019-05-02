@@ -27,10 +27,21 @@ def template(name: str) -> str:
         return f.read()
 
 
-def current_user(request) -> str:
+def current_user(request) -> User:
     session_id = request.cookies.get('user', '')
     username = session.get(session_id, '【游客】')
-    return username
+    user = User.find_by(username=username)
+    return user
+
+
+def login_required(route_function):
+    def func(request):
+        u = current_user(request)
+        if u is None:
+            return redirect("/login")
+        return route_function
+
+    return func
 
 
 def response_with_headers(
@@ -51,7 +62,11 @@ def route_login(request) -> bytes:
         # 'Set-Cookie': 'height=169; gua=1; pwd=2; Path=/',
     }
     log('login, cookies', request.cookies)
-    username = current_user(request)
+    u = current_user(request)
+    if u is None:
+        username = "【游客】"
+    else:
+        username = u.username
     log(f"username: {username}")
     if request.method == 'POST':
         form = request.form()
@@ -123,26 +138,25 @@ def redirect(url: str) -> bytes:
     return r.encode('utf-8')
 
 
+@login_required
 def route_profile(request):
-    username = current_user(request)
-    if username == "【游客】":
-        r = redirect('/')
-        return r
-    u = User.find_by(username=username)
+    u = current_user(request)
     body = template('profile.html')
     body = body.replace('{{id}}', str(u.id))
-    body = body.replace('{{username}}', username)
+    body = body.replace('{{username}}', u.username)
     body = body.replace('{{note}}', u.note)
     header = response_with_headers({})
     r = header + '\r\n' + body
     return r.encode(encoding='utf-8')
 
 
+@login_required
 def index(request) -> bytes:
     headers = {
         'Content-Type': 'text/html',
     }
-    todo_list = Todo.all()
+    u = current_user(request)
+    todo_list = Todo.find_all(user_id=u.id)
     todos = []
     for t in todo_list:
         edit_link = f"<a href='/todo/edit?id={t.id}'>编辑</a>"
@@ -157,16 +171,20 @@ def index(request) -> bytes:
     return r.encode(encoding='utf-8')
 
 
+@login_required
 def add(request):
+    u = current_user(request)
     if request.method == 'POST':
         form = request.form()
         t = Todo.new(form)
+        t.user_id = u.id
         t.save()
     # 浏览器发送数据过来被处理后, 重定向到首页
     # 浏览器在请求新首页的时候, 就能看到新增的数据了
     return redirect('/todo')
 
 
+@login_required
 def update(request):
     if request.method == 'POST':
         form = request.form()
@@ -177,6 +195,7 @@ def update(request):
     return redirect('/todo')
 
 
+@login_required
 def edit(request):
     from server import error
 
@@ -184,10 +203,13 @@ def edit(request):
         'Content-Type': 'text/html',
     }
 
+    u = current_user(request)
     todo_id = int(request.query.get("id", -1))
     if todo_id < 0:
         return error(404)
     t = Todo.find_by(id=todo_id)
+    if t.user_id != u.id:
+        return redirect("/login")
     body = template('todo_edit.html')
     body = body.replace('{{todo_id}}', str(t.id))
     body = body.replace('{{todo_title}}', str(t.title))
@@ -197,9 +219,8 @@ def edit(request):
     return r.encode(encoding='utf-8')
 
 
+@login_required
 def delete_todo(request):
-    from server import error
-
     todo_id = int(request.query.get("id", -1))
     t = Todo.find_by(id=todo_id)
     if t is not None:
