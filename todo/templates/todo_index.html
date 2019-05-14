@@ -2,15 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TODO 程序</title>
+    <title>todo</title>
 </head>
 <body>
-    <h1>TODO</h1>
     <form action="/todo/add" method="post">
-        <input type="text" name="title" placeholder="请输入todo">
-        <br>
-        <button type="submit">添加</button>
+        <input name="task" placeholder="请输入todo">
+        <button>add todo</button>
     </form>
-    <div>{{todos}}</div>
+
+    {% for t in todos %}
+        <div>
+            {{ t.id }} : {{ t.task }}  @ {{ t.ct() }}
+            <a href="/todo/edit?id={{t.id}}">edit</a>
+            <a href="/todo/delete?id={{t.id}}">delete</a>
+        </div>
+    {% endfor %}
 </body>
 </html>

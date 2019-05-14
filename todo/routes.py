@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+import functools
 import random
 
 from models.todo import Todo
-from utils import log
+from utils import log, http_response, template
 from models.user import User
 
 # session 可以在服务器端实现过期功能
@@ -21,25 +22,21 @@ def random_str() -> str:
     return s
 
 
-def template(name: str) -> str:
-    path = 'templates/' + name
-    with open(path, 'r', encoding='utf-8') as f:
-        return f.read()
-
-
 def current_user(request) -> User:
     session_id = request.cookies.get('user', '')
     username = session.get(session_id, '【游客】')
     user = User.find_by(username=username)
+    log("current_user: ", user)
     return user
 
 
 def login_required(route_function):
+    @functools.wraps(route_function)
     def func(request):
         u = current_user(request)
         if u is None:
             return redirect("/login")
-        return route_function
+        return route_function(request)
 
     return func
 
@@ -152,23 +149,11 @@ def route_profile(request):
 
 @login_required
 def index(request) -> bytes:
-    headers = {
-        'Content-Type': 'text/html',
-    }
     u = current_user(request)
+
     todo_list = Todo.find_all(user_id=u.id)
-    todos = []
-    for t in todo_list:
-        edit_link = f"<a href='/todo/edit?id={t.id}'>编辑</a>"
-        delete_link = f"<a href='/todo/delete?id={t.id}'>删除</a>"
-        s = f'<h3>{t.id} : {t.title} {edit_link} {delete_link}</h3>'
-        todos.append(s)
-    todo_html = ''.join(todos)
-    body = template('todo_index.html')
-    body = body.replace('{{todos}}', todo_html)
-    header = response_with_headers(headers)
-    r = header + '\r\n' + body
-    return r.encode(encoding='utf-8')
+    body = template('todo_index.html', todos=todo_list)
+    return http_response(body)
 
 
 @login_required
@@ -176,8 +161,7 @@ def add(request):
     u = current_user(request)
     if request.method == 'POST':
         form = request.form()
-        t = Todo.new(form)
-        t.user_id = u.id
+        t = Todo.new(form, user_id=u.id)
         t.save()
     # 浏览器发送数据过来被处理后, 重定向到首页
     # 浏览器在请求新首页的时候, 就能看到新增的数据了
@@ -199,10 +183,6 @@ def update(request):
 def edit(request):
     from server import error
 
-    headers = {
-        'Content-Type': 'text/html',
-    }
-
     u = current_user(request)
     todo_id = int(request.query.get("id", -1))
     if todo_id < 0:
@@ -210,13 +190,8 @@ def edit(request):
     t = Todo.find_by(id=todo_id)
     if t.user_id != u.id:
         return redirect("/login")
-    body = template('todo_edit.html')
-    body = body.replace('{{todo_id}}', str(t.id))
-    body = body.replace('{{todo_title}}', str(t.title))
-
-    header = response_with_headers(headers)
-    r = header + '\r\n' + body
-    return r.encode(encoding='utf-8')
+    body = template('todo_edit.html', todo=t)
+    return http_response(body)
 
 
 @login_required

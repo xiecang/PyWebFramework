@@ -53,7 +53,7 @@ class Model(object):
         """
         path = cls.db_path()
         models = load(path)
-        ms = [cls.new(m) for m in models]
+        ms = [cls(m) for m in models]
         return ms
 
     def save(self):
@@ -107,6 +107,10 @@ class Model(object):
         return None
 
     @classmethod
+    def find(cls, id):
+        return cls.find_by(id=id)
+
+    @classmethod
     def find_all(cls, **kwargs):
         """
         用法如下，kwargs 是只有一个元素的 dict
@@ -125,7 +129,7 @@ class Model(object):
 
     def remove(self, **kwargs):
         models = self.all()
-        first_index = 0
+        first_index = 1
         if self.__dict__.get('id') is not None:
             index = -1
             for i, m in enumerate(models):
@@ -141,8 +145,7 @@ class Model(object):
         path = self.db_path()
         save(l, path)
 
-
-def __repr__(self):
+    def __repr__(self):
         classname = self.__class__.__name__
         properties = ['{}: ({})'.format(k, v) for k, v in self.__dict__.items()]
         s = '\n'.join(properties)
