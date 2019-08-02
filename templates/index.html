@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <style>
+        .container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        a {
+            display: block;
+            margin: 10px;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: cornflowerblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello {{username}}</h1>
+        <a href="/user/register/view">Register</a>
+        <a href="/user/login/view">Login</a>
+        <a href="/todo/index">Todo</a>
+        <a href="/weibo/index">Weibo</a>
+    </div>
+</body>
+</html>

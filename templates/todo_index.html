@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        a {
+            /* display: block; */
+            /* margin: 10px; */
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: cornflowerblue;
+        }
+
+        form {
+            margin: 50px 0;
+        }
+
+        input {
+            height: 30px;
+            padding: 5px 10px;
+            border: 0.5px cornflowerblue solid;
+            /* border-radius: 15px; */
+            background-color: #fff;
+            color: cornflowerblue;
+        }
+
+        button {
+            background-color: cornflowerblue;
+            color: #ddd;
+            width: 50px;
+            height: 20px;
+            border-radius: 10px;
+            border: none;
+        }
+
+        button:hover {
+            color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TODO</h1>
+        <form action="/todo/add" method="post">
+            <input type="text" name="title" placeholder="请输入todo">
+            <button type="submit">添加</button>
+        </form>
+        {% for t in todos %}
+        <h3>
+            {{ t.title }}
+            <a href="/todo/edit?id={{ t.id }}">编辑</a>
+            <a href="/todo/delete?id={{ t.id }}&token={{ token }}">删除</a>
+        </h3>
+        {% endfor %}
+    </div>
+</body>
+</html>

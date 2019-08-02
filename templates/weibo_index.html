@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>weibo</title>
+    <style>
+            * {
+                box-sizing: border-box;
+            }
+    
+            .container {
+                margin: 20px auto;
+                text-align: center;
+            }
+    
+            a {
+                /* display: block; */
+                /* margin: 10px; */
+                text-decoration: none;
+            }
+    
+            a:hover {
+                color: cornflowerblue;
+            }
+    
+            form {
+                margin: 20px 0;
+            }
+    
+            input {
+                height: 30px;
+                padding: 5px 10px;
+                border: 0.5px cornflowerblue solid;
+                /* border-radius: 15px; */
+                background-color: #fff;
+                color: cornflowerblue;
+            }
+    
+            button {
+                background-color: cornflowerblue;
+                color: #ddd;
+                width: 100px;
+                height: 20px;
+                border-radius: 10px;
+                border: none;
+            }
+    
+            button:hover {
+                color: #eee;
+            }
+
+            .weibo-card {
+                background-color: #eee;
+                max-width: 450px;
+                margin: 0 auto;
+                padding: 5px 0;
+                border-radius: 5px;
+            }
+
+            .weibo {
+                margin-top: 5px;
+                font-size: 16px;
+            }
+
+            .comment {
+                font-size: 12px;
+            }
+        </style>
+</head>
+<body>
+    <div class="container">
+        <form action="/weibo/add" method="post">
+            <input name="content">
+            <br>
+            <button type="submit">发表新微博</button>
+        </form>
+        
+        {% for w in weibos %}
+            <div class="weibo-card">
+                <div class="weibo">
+                    {{ w.content }} from {{ user.username }}
+                    <a href="/weibo/delete?id={{ w.id }}">删除</a>
+                    <a href="/weibo/edit?id={{ w.id }}">修改</a>
+                </div>
+                <hr>
+                {% for c in w.comments() %}
+                    <div class="comment">
+                        {{ c.user().username }} : {{ c.content }}
+                        <a href="/comment/delete?id={{ c.id }}">删除</a>
+                        <a href="/comment/edit?id={{ c.id }}">修改</a>
+                    </div>
+                {% endfor %}
+                <form action="/comment/add" method="post">
+                    <input type="hidden" name="weibo_id" value="{{ w.id }}">
+                    <input name="content">
+                    <br>
+                    <button type="submit">添加评论</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

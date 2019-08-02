@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO修改</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        input {
+            height: 30px;
+            padding: 5px 10px;
+            border: 0.5px cornflowerblue solid;
+            /* border-radius: 15px; */
+            background-color: #fff;
+            color: cornflowerblue;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: cornflowerblue;
+            color: #ddd;
+            width: 100px;
+            height: 20px;
+            border-radius: 10px;
+            border: none;
+        }
+
+        button:hover {
+            color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>修改 TODO</h1>
+        <form action="/todo/update?token={{ token }}" method="post">
+            <input name="id" placeholder="id" value="{{ todo.id }}" hidden>
+            <input name="title" placeholder="title" value="{{ todo.title }}">
+            <br>
+            <button type="submit">提交修改</button>
+        </form>
+    </div>
+</body>
+</html>

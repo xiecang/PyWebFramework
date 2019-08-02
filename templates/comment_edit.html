@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>评论修改</title>
+    <style>
+            * {
+                box-sizing: border-box;
+            }
+    
+            .container {
+                margin: 20px auto;
+                text-align: center;
+            }
+    
+            a {
+                /* display: block; */
+                /* margin: 10px; */
+                text-decoration: none;
+            }
+    
+            a:hover {
+                color: cornflowerblue;
+            }
+    
+            form {
+                margin: 50px 0;
+            }
+    
+            input {
+                height: 30px;
+                padding: 5px 10px;
+                border: 0.5px cornflowerblue solid;
+                /* border-radius: 15px; */
+                background-color: #fff;
+                color: cornflowerblue;
+                margin-bottom: 10px;
+            }
+    
+            button {
+                background-color: cornflowerblue;
+                color: #ddd;
+                width: 100px;
+                height: 20px;
+                border-radius: 10px;
+                border: none;
+            }
+    
+            button:hover {
+                color: #eee;
+            }
+        </style>
+</head>
+<body>
+    <div class="container">
+        <h1>修改 Comment</h1>
+        <form action="/comment/update" method="post">
+            <input hidden="hidden" name="id" placeholder="id" value="{{ comment.id }}">
+            <br>
+            <input name="content" placeholder="content" value="{{ comment.content }}">
+            <br>
+            <button>提交修改</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <style>
+            * {
+                box-sizing: border-box;
+            }
+    
+            .container {
+                margin: 20px auto;
+                text-align: center;
+            }
+    
+            a {
+                /* display: block; */
+                /* margin: 10px; */
+                text-decoration: none;
+            }
+    
+            a:hover {
+                color: cornflowerblue;
+            }
+    
+            form {
+                margin: 50px 0;
+            }
+    
+            input {
+                height: 30px;
+                padding: 5px 10px;
+                border: 0.5px cornflowerblue solid;
+                /* border-radius: 15px; */
+                background-color: #fff;
+                color: cornflowerblue;
+            }
+    
+            button {
+                background-color: cornflowerblue;
+                color: #ddd;
+                width: 50px;
+                height: 20px;
+                border-radius: 10px;
+                border: none;
+            }
+    
+            button:hover {
+                color: #eee;
+            }
+        </style>
+</head>
+<body>
+    <div class="container">
+        <h1>注册</h1>
+        <form action="/user/register" method="post">
+            <input type="text" name="username" placeholder="请输入用户名">
+            <br>
+            <input type="text" name="password" placeholder="请输入密码">
+            <br>
+            <button type="submit">注册</button>
+        </form>
+        <!-- <h3>{{result}}</h3> -->
+    </div>
+</body>
+</html>
