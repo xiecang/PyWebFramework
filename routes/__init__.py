@@ -15,7 +15,9 @@ from utils import log
 def initialized_environment():
     parent = os.path.dirname(os.path.dirname(__file__))
     path = os.path.join(parent, 'templates')
+    # 创建一个加载器, jinja2 会从这个目录中加载模板
     loader = FileSystemLoader(path)
+    # 用加载器创建一个环境, 有了它才能读取模板文件
     e = Environment(loader=loader)
     return e
 
@@ -25,7 +27,10 @@ class Template:
 
     @classmethod
     def render(cls, filename, *args, **kwargs):
+        # 调用 get_template() 方法加载模板并返回
         template = cls.e.get_template(filename)
+        # 用 render() 方法渲染模板
+        # 可以传递参数
         return template.render(*args, **kwargs)
 
 
@@ -63,6 +68,11 @@ def formatted_header(headers, code=200):
 
 
 def redirect(url, session_id=None):
+    """
+    浏览器在收到 302 响应的时候
+    会自动在 HTTP header 里面找 Location 字段并获取一个 url
+    然后自动请求新的 url
+    """
     h = {
         'Location': url,
     }

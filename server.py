@@ -32,6 +32,7 @@ def request_from_connection(connection):
     while True:
         r = connection.recv(buffer_size)
         request += r
+        # 取到的数据长度不够 buffer_size 的时候，说明数据已经取完了。
         if len(r) < buffer_size:
             request = request.decode()
             log('request\n {}'.format(request))
@@ -42,9 +43,11 @@ def process_request(connection):
     with connection:
         r = request_from_connection(connection)
         log('request log:\n <{}>'.format(r))
+        # 把原始请登录用户求数据传给 Request 对象
         request = Request(r)
         response = response_for_path(request)
         log("response log:\n <{}>".format(response))
+        # 把响应发送给客户端
         connection.sendall(response)
 
 
@@ -57,9 +60,11 @@ def run(host, port):
     log('开始运行于', 'http://{}:{}'.format(host, port))
     with socket.socket() as s:
         s.bind((host, port))
+        # 监听 接受 读取请求数据 解码成字符串
         s.listen()
         while True:
             connection, address = s.accept()
+            # 第二个参数类型必须是 tuple
             log('ip {}'.format(address))
             _thread.start_new_thread(process_request, (connection,))
 

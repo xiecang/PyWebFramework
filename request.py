@@ -2,6 +2,7 @@ import urllib.parse
 from utils import log
 
 
+# 定义一个 class 用于保存请求的数据
 class Request(object):
     def __init__(self, raw_data):
         # 只 split 一次，body 中可能有换行
@@ -46,6 +47,15 @@ class Request(object):
         return f
 
     def parse_path(self, path):
+        """
+        输入: /arm?message=hello&author=arm
+        返回
+        self.path = arm
+        self.query = {
+            'message': 'hello',
+            'author': 'arm',
+        })
+        """
         index = path.find('?')
         if index == -1:
             self.path = path

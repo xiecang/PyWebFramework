@@ -31,6 +31,7 @@ class SQLModel(object):
 
     @classmethod
     def new(cls, form):
+        # cls(form) 相当于 User(form)
         m = cls(form)
         id = cls.insert(m.__dict__)
         m.id = id
@@ -38,11 +39,18 @@ class SQLModel(object):
 
     @classmethod
     def one(cls, **kwargs):
+        # User.one(username=request.args['username'])
+        # SELECT * FROM
+        # 	`User`
+        # WHERE
+        # 	username='arm'
+        # LIMIT 1
         ws = ['{}=%s'.format(k) for k in kwargs.keys()]
         where_sql = ' AND '.join(ws)
         sql = 'SELECT * FROM {} WHERE {}'.format(
             cls.table_name(),
             where_sql,
+            'LIMIT 1'
         )
 
         log('ORM one', sql)
@@ -82,6 +90,11 @@ class SQLModel(object):
     @classmethod
     def insert(cls, form):
         form.pop('id', None)
+        # INSERT INTO `User` (
+        #   `username`, `password`, `email`
+        # ) VALUES (
+        #   'xx', 'xxx', 'xxx'
+        # )
         sql_keys = ', '.join(['`{}`'.format(k) for k in form.keys()])
         sql_values = ', '.join(['%s'] * len(form))
         sql_insert = 'INSERT INTO {} ({}) VALUES ({})'.format(
@@ -114,6 +127,11 @@ class SQLModel(object):
         sql_set = ', '.join(
             ['`{}`=%s'.format(k) for k in kwargs.keys()]
         )
+        # UPDATE
+        # 	`User`
+        # SET
+        # 	`username`='test', `password`='456'
+        # WHERE `id`=3;
         sql_update = 'UPDATE {} SET {} WHERE `id`=%s'.format(
             cls.table_name(),
             sql_set,

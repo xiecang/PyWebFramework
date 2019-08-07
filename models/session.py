@@ -33,6 +33,12 @@ class Session(SQLModel):
 
     @classmethod
     def add(cls, user_id):
+        # 下面是把用户名存入 cookie 中
+        # headers['Set-Cookie'] = 'user={}'.format(u.username)
+        # session 会话
+        # token 令牌
+        # 设置一个随机字符串来当令牌使用
+
         session_id = random_string()
         form = dict(
             session_id=session_id,
