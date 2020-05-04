@@ -93,7 +93,7 @@ def login_required(route_function):
             log('游客用户')
             return redirect('/user/login/view')
         else:
-            log('登录用户', route_function)
+            log('登录用户', u)
             return route_function(request)
 
     return f

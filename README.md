@@ -21,3 +21,15 @@ python server.py
 ```
 浏览器访问 http://localhost:3000/  
 用户名: guest, 密码: 123  
+
+## Demo
+
+**请求以及响应报文解析，登录注册， Todo 演示**
+
+![registe & login & todo](static/registe & login & todo.gif)
+
+
+
+**发表、评论、修改、删除 weibo**
+
+![weibo](static/weibo.gif)
